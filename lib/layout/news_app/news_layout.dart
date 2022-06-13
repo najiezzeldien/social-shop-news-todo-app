@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/layout/news_app/cubit/cubit.dart';
 import 'package:todo_app/layout/news_app/cubit/states.dart';
-import 'package:todo_app/modules/search/search_screen.dart';
+import 'package:todo_app/modules/news_app/search/search_screen.dart';
 import 'package:todo_app/shared/components/components.dart';
 import 'package:todo_app/shared/cubit/cubit.dart';
 

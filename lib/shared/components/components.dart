@@ -1,7 +1,11 @@
 import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_app/modules/web_view/web_view_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:todo_app/layout/shop_app/cubit/cubit.dart';
+import 'package:todo_app/modules/news_app/web_view/web_view_screen.dart';
+import 'package:todo_app/modules/shop_app/login/cubit/state.dart';
 import 'package:todo_app/shared/cubit/cubit.dart';
+import 'package:todo_app/shared/styles/styles.dart';
 
 Widget defaultButton({
   double width = double.infinity,
@@ -30,6 +34,12 @@ Widget defaultButton({
         color: background,
       ),
     );
+Widget defaultTextButton({@required Function function, @required String text}) {
+  return TextButton(
+    onPressed: function,
+    child: Text(text.toUpperCase()),
+  );
+}
 
 Widget defaultFormField({
   @required TextEditingController controller,
@@ -267,3 +277,150 @@ void navigateTo(context, widget) => Navigator.push(
         builder: (context) => widget,
       ),
     );
+void navigateAndFinish(context, widget) {
+  Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => widget,
+      ),
+      (Route<dynamic> route) => false);
+}
+
+void showToast({
+  @required String message,
+  @required ToastStates state,
+}) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 5,
+    backgroundColor: chooseToastColor(state),
+    textColor: Colors.white,
+    fontSize: 16,
+  );
+}
+
+enum ToastStates { SUCCESS, ERROR, WARNING }
+
+Color chooseToastColor(ToastStates state) {
+  Color color;
+  switch (state) {
+    case ToastStates.SUCCESS:
+      color = Colors.green;
+      break;
+    case ToastStates.ERROR:
+      color = Colors.red;
+      break;
+    case ToastStates.WARNING:
+      color = Colors.amber;
+      break;
+  }
+  return color;
+}
+
+Widget buildListProduct(
+  model,
+  BuildContext context, {
+  bool isOldPrice = true,
+}) {
+  return Padding(
+    padding: const EdgeInsets.all(20.0),
+    child: Container(
+      height: 120,
+      child: Row(
+        children: [
+          Stack(
+            alignment: AlignmentDirectional.bottomStart,
+            children: [
+              Image(
+                image: NetworkImage(model.image),
+                width: 120,
+                height: 120,
+              ),
+              if (model.discount != 0 && isOldPrice)
+                Container(
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      'DISCOUNT',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  model.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+                Spacer(),
+                Row(
+                  children: [
+                    Text(
+                      model.price.toString(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: defaultColor,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (model.discount != 0 && isOldPrice)
+                      Text(
+                        model.oldPrice.toString(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        ShopCubit.get(context).changeFavorites(model.id);
+                      },
+                      icon: CircleAvatar(
+                        radius: 15,
+                        backgroundColor:
+                            ShopCubit.get(context).favorites[model.id]
+                                ? defaultColor
+                                : Colors.grey,
+                        child: Icon(
+                          Icons.favorite_border,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
