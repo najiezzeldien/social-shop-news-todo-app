@@ -16,7 +16,7 @@ import 'package:todo_app/shared/cubit/states.dart';
 import 'package:todo_app/shared/network/local/cache_helper.dart';
 import 'package:todo_app/shared/network/remote/dio_helper.dart';
 import 'package:todo_app/shared/styles/themes.dart';
-//
+
 void main() async {
   // بيتأكد ان كل حاجه هنا في الميثود خلصت و بعدين يتفح الابلكيشن
   WidgetsFlutterBinding.ensureInitialized();
